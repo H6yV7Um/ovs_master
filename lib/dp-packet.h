@@ -637,7 +637,7 @@ dp_packet_mbuf_init(struct dp_packet *p OVS_UNUSED)
 }
 
 static inline bool
-dp_packet_ip_checksum_valid(struct dp_packet *p OVS_UNUSED)
+dp_packet_ip_checksum_valid(const struct dp_packet *p OVS_UNUSED)
 {
 #ifdef DPDK_NETDEV
     return (p->mbuf.ol_flags & PKT_RX_IP_CKSUM_MASK) ==
@@ -648,7 +648,7 @@ dp_packet_ip_checksum_valid(struct dp_packet *p OVS_UNUSED)
 }
 
 static inline bool
-dp_packet_ip_checksum_bad(struct dp_packet *p OVS_UNUSED)
+dp_packet_ip_checksum_bad(const struct dp_packet *p OVS_UNUSED)
 {
 #ifdef DPDK_NETDEV
     return (p->mbuf.ol_flags & PKT_RX_IP_CKSUM_MASK) ==
@@ -659,7 +659,7 @@ dp_packet_ip_checksum_bad(struct dp_packet *p OVS_UNUSED)
 }
 
 static inline bool
-dp_packet_l4_checksum_valid(struct dp_packet *p OVS_UNUSED)
+dp_packet_l4_checksum_valid(const struct dp_packet *p OVS_UNUSED)
 {
 #ifdef DPDK_NETDEV
     return (p->mbuf.ol_flags & PKT_RX_L4_CKSUM_MASK) ==
@@ -670,7 +670,7 @@ dp_packet_l4_checksum_valid(struct dp_packet *p OVS_UNUSED)
 }
 
 static inline bool
-dp_packet_l4_checksum_bad(struct dp_packet *p OVS_UNUSED)
+dp_packet_l4_checksum_bad(const struct dp_packet *p OVS_UNUSED)
 {
 #ifdef DPDK_NETDEV
     return (p->mbuf.ol_flags & PKT_RX_L4_CKSUM_MASK) ==
