@@ -35,6 +35,7 @@
 #include "dpif.h"
 #include "openvswitch/dynamic-string.h"
 #include "flow.h"
+#include "ipf.h"
 #include "openvswitch/match.h"
 #include "netdev.h"
 #include "netdev-dpdk.h"
@@ -1747,6 +1748,44 @@ dpctl_ct_get_nconns(int argc, const char *argv[],
     return error;
 }
 
+static int
+dpctl_ct_ipf_change_enabled(int argc, const char *argv[],
+                            struct dpctl_params *dpctl_p)
+{
+    struct dpif *dpif;
+    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 4);
+    if (!error) {
+        char v4_or_v6[3] = {0};
+        if (ovs_scan(argv[argc - 2], "%2s", v4_or_v6) &&
+            (!strncmp(v4_or_v6, "v4", 2) || !strncmp(v4_or_v6, "v6", 2))) {
+            uint32_t enabled;
+            if (ovs_scan(argv[argc - 1], "%"SCNu32, &enabled)) {
+                error = ct_dpif_ipf_change_enabled(
+                            dpif, !strncmp(v4_or_v6, "v6", 2), enabled);
+                if (!error) {
+                    dpctl_print(dpctl_p,
+                                "changing fragmentation enabled successful");
+                } else {
+                    dpctl_error(dpctl_p, error,
+                                "changing fragmentation enabled failed");
+                }
+            } else {
+                error = EINVAL;
+                dpctl_error(
+                    dpctl_p, error,
+                    "parameter missing: 0 for disabled or 1 for enabled");
+            }
+        } else {
+            error = EINVAL;
+            dpctl_error(dpctl_p, error,
+                        "parameter missing: v4 for ipv4 or v6 for ipv6");
+        }
+        dpif_close(dpif);
+    }
+
+    return error;
+}
+
 /* Undocumented commands for unit testing. */
 
 static int
@@ -2046,6 +2085,8 @@ static const struct dpctl_command all_commands[] = {
     { "ct-set-maxconns", "[dp] maxconns", 1, 2, dpctl_ct_set_maxconns, DP_RW },
     { "ct-get-maxconns", "[dp]", 0, 1, dpctl_ct_get_maxconns, DP_RO },
     { "ct-get-nconns", "[dp]", 0, 1, dpctl_ct_get_nconns, DP_RO },
+    { "ipf-set-enabled", "[dp] v4_or_v6 enabled", 2, 3,
+       dpctl_ct_ipf_change_enabled, DP_RW },
     { "help", "", 0, INT_MAX, dpctl_help, DP_RO },
     { "list-commands", "", 0, INT_MAX, dpctl_list_commands, DP_RO },
 

@@ -200,6 +200,7 @@ int ct_dpif_flush(struct dpif *, const uint16_t *zone,
 int ct_dpif_set_maxconns(struct dpif *dpif, uint32_t maxconns);
 int ct_dpif_get_maxconns(struct dpif *dpif, uint32_t *maxconns);
 int ct_dpif_get_nconns(struct dpif *dpif, uint32_t *nconns);
+int ct_dpif_ipf_change_enabled(struct dpif *, bool, bool);
 void ct_dpif_entry_uninit(struct ct_dpif_entry *);
 void ct_dpif_format_entry(const struct ct_dpif_entry *, struct ds *,
                           bool verbose, bool print_stats);

@@ -268,3 +268,14 @@ Only supported for userspace datapath.
 \*(DX\fBct\-get\-nconns\fR [\fIdp\fR]
 Read the current number of connection tracker connections.
 Only supported for userspace datapath.
+.
+.TP
+\*(DX\fBipf\-set\-enabled\fR [\fIdp\fR] [\fIv4 or v6\fR] \fBenable\fR
+Enables or disables fragmentation handling for the userspace datapath
+connection tracker.  Either v4 or v6 must be specified.  Both v4 and v6
+are enabled by default.  When fragmentation handling is enabled, the
+rules for handling fragments before entering conntrack should not
+differentiate between first and other fragments.  Although, this would
+logically already be true anyways, it is mentioned for clarity.  If there
+is a need to differentiate between first and other fragments, do it after
+conntrack.

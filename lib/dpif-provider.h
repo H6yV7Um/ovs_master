@@ -444,6 +444,8 @@ struct dpif_class {
     /* Get number of connections tracked. */
     int (*ct_get_nconns)(struct dpif *, uint32_t *nconns);
 
+    /* IP Fragmentation. */
+    int (*ipf_change_enabled)(struct dpif *, bool, bool);
     /* Meters */
 
     /* Queries 'dpif' for supported meter features.

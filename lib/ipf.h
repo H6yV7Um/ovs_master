@@ -60,4 +60,7 @@ ipf_init(void);
 void
 ipf_destroy(void);
 
+int
+ipf_change_enabled(bool v6, bool enable);
+
 #endif /* ipf.h */

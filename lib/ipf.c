@@ -1236,3 +1236,18 @@ ipf_destroy(void)
     ipf_lock_unlock(&ipf_lock);
     ipf_lock_destroy(&ipf_lock);
 }
+
+int
+ipf_change_enabled(bool v6, bool enable)
+{
+    if ((v6 != true && v6 != false) ||
+        (enable != true && enable != false)) {
+        return 1;
+    }
+    if (v6) {
+        atomic_store_relaxed(&ifp_v6_enabled, enable);
+    } else {
+        atomic_store_relaxed(&ifp_v4_enabled, enable);
+    }
+    return 0;
+}

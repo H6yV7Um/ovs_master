@@ -47,6 +47,7 @@
 #include "flow.h"
 #include "hmapx.h"
 #include "id-pool.h"
+#include "ipf.h"
 #include "latch.h"
 #include "netdev.h"
 #include "netdev-vport.h"
@@ -5870,6 +5871,13 @@ dpif_netdev_ct_get_nconns(struct dpif *dpif, uint32_t *nconns)
     return conntrack_get_nconns(&dp->conntrack, nconns);
 }
 
+static int
+dpif_netdev_ipf_change_enabled(struct dpif *dpif OVS_UNUSED, bool v6,
+                               bool enable)
+{
+    return ipf_change_enabled(v6, enable);
+}
+
 const struct dpif_class dpif_netdev_class = {
     "netdev",
     dpif_netdev_init,
@@ -5918,6 +5926,7 @@ const struct dpif_class dpif_netdev_class = {
     dpif_netdev_ct_set_maxconns,
     dpif_netdev_ct_get_maxconns,
     dpif_netdev_ct_get_nconns,
+    dpif_netdev_ipf_change_enabled,
     dpif_netdev_meter_get_features,
     dpif_netdev_meter_set,
     dpif_netdev_meter_get,

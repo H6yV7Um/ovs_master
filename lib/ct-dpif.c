@@ -164,6 +164,14 @@ ct_dpif_get_nconns(struct dpif *dpif, uint32_t *nconns)
             : EOPNOTSUPP);
 }
 
+int
+ct_dpif_ipf_change_enabled(struct dpif *dpif, bool v6, bool enable)
+{
+    return (dpif->dpif_class->ipf_change_enabled
+            ? dpif->dpif_class->ipf_change_enabled(dpif, v6, enable)
+            : EOPNOTSUPP);
+}
+
 void
 ct_dpif_entry_uninit(struct ct_dpif_entry *entry)
 {

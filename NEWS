@@ -12,6 +12,8 @@ Post-v2.9.0
        use --names or --no-names to override.  See ovs-ofctl(8) for details.
    - Userspace datapath:
      * Add v4/v6 fragmentation support for conntrack.
+     * New "ovs-appctl dpctl/ipf-set-enabled" command for userspace datapath
+       conntrack fragmentation support.
    - ovs-vsctl: New commands "add-bond-iface" and "del-bond-iface".
    - OpenFlow:
      * OFPT_ROLE_STATUS is now available in OpenFlow 1.3.
