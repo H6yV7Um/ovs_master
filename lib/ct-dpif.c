@@ -188,6 +188,27 @@ ct_dpif_ipf_set_nfrag_max(struct dpif *dpif, uint32_t max_frags)
             : EOPNOTSUPP);
 }
 
+int ct_dpif_ipf_get_status(struct dpif *dpif, bool *ipf_v4_enabled,
+    unsigned int *min_v4_frag_size, unsigned int *nfrag_max,
+    unsigned int *nfrag, unsigned int *n4frag_accepted,
+    unsigned int *n4frag_completed_sent,
+    unsigned int *n4frag_expired_sent, unsigned int *n4frag_too_small,
+    unsigned int *n4frag_overlap, bool *ipf_v6_enabled,
+    unsigned int *min_v6_frag_size, unsigned int *n6frag_accepted,
+    unsigned int *n6frag_completed_sent,
+    unsigned int *n6frag_expired_sent, unsigned int *n6frag_too_small,
+    unsigned int *n6frag_overlap)
+{
+    return (dpif->dpif_class->ipf_get_status
+            ? dpif->dpif_class->ipf_get_status(dpif, ipf_v4_enabled,
+            min_v4_frag_size, nfrag_max, nfrag, n4frag_accepted,
+            n4frag_completed_sent, n4frag_expired_sent, n4frag_too_small,
+            n4frag_overlap, ipf_v6_enabled, min_v6_frag_size, n6frag_accepted,
+            n6frag_completed_sent, n6frag_expired_sent, n6frag_too_small,
+            n6frag_overlap)
+            : EOPNOTSUPP);
+}
+
 void
 ct_dpif_entry_uninit(struct ct_dpif_entry *entry)
 {

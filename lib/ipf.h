@@ -69,4 +69,7 @@ ipf_set_min_frag(bool v6, uint32_t value);
 int
 ipf_set_nfrag_max(uint32_t value);
 
+int
+ipf_get_status(struct ipf_status *ipf_status);
+
 #endif /* ipf.h */

@@ -35,7 +35,6 @@
 #include "dpif.h"
 #include "openvswitch/dynamic-string.h"
 #include "flow.h"
-#include "ipf.h"
 #include "openvswitch/match.h"
 #include "netdev.h"
 #include "netdev-dpdk.h"
@@ -1853,6 +1852,78 @@ dpctl_ct_ipf_set_nfrag_max(int argc, const char *argv[],
     return error;
 }
 
+static int
+dpctl_ct_ipf_get_status(int argc, const char *argv[],
+                        struct dpctl_params *dpctl_p)
+{
+    struct dpif *dpif;
+    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 2);
+    if (!error) {
+        bool ipf_v4_enabled;
+        unsigned int min_v4_frag_size;
+        unsigned int nfrag_max;
+        unsigned int nfrag;
+        unsigned int n4frag_accepted;
+        unsigned int n4frag_completed_sent;
+        unsigned int n4frag_expired_sent;
+        unsigned int n4frag_too_small;
+        unsigned int n4frag_overlap;
+        unsigned int min_v6_frag_size;
+        bool ipf_v6_enabled;
+        unsigned int n6frag_accepted;
+        unsigned int n6frag_completed_sent;
+        unsigned int n6frag_expired_sent;
+        unsigned int n6frag_too_small;
+        unsigned int n6frag_overlap;
+        error = ct_dpif_ipf_get_status(dpif, &ipf_v4_enabled,
+            &min_v4_frag_size, &nfrag_max, &nfrag, &n4frag_accepted,
+            &n4frag_completed_sent, &n4frag_expired_sent, &n4frag_too_small,
+            &n4frag_overlap, &ipf_v6_enabled, &min_v6_frag_size,
+            &n6frag_accepted, &n6frag_completed_sent, &n6frag_expired_sent,
+            &n6frag_too_small, &n6frag_overlap);
+
+        if (!error) {
+            dpctl_print(dpctl_p, "\tFragmentation Module Status\n");
+            dpctl_print(dpctl_p, "\t---------------------------\n");
+            dpctl_print(dpctl_p, "\tv4 enabled: %u\n", ipf_v4_enabled);
+            dpctl_print(dpctl_p, "\tv6 enabled: %u\n", ipf_v6_enabled);
+            dpctl_print(dpctl_p, "\tmax num frags (v4/v6): %u\n", nfrag_max);
+            dpctl_print(dpctl_p, "\tnum frag: %u\n", nfrag);
+            dpctl_print(dpctl_p, "\tmin v4 frag size: %u\n",
+                        min_v4_frag_size);
+            dpctl_print(dpctl_p, "\tv4 frags accepted: %u\n",
+                        n4frag_accepted);
+            dpctl_print(dpctl_p, "\tv4 frags completed: %u\n",
+                        n4frag_completed_sent);
+            dpctl_print(dpctl_p, "\tv4 frags expired: %u\n",
+                        n4frag_expired_sent);
+            dpctl_print(dpctl_p, "\tv4 frags too small: %u\n",
+                        n4frag_too_small);
+            dpctl_print(dpctl_p, "\tv4 frags overlapped: %u\n",
+                        n4frag_overlap);
+            dpctl_print(dpctl_p, "\tmin v6 frag size: %u\n",
+                        min_v6_frag_size);
+            dpctl_print(dpctl_p, "\tv6 frags accepted: %u\n",
+                        n6frag_accepted);
+            dpctl_print(dpctl_p, "\tv6 frags completed: %u\n",
+                        n6frag_completed_sent);
+            dpctl_print(dpctl_p, "\tv6 frags expired: %u\n",
+                        n6frag_expired_sent);
+            dpctl_print(dpctl_p, "\tv6 frags too small: %u\n",
+                        n6frag_too_small);
+            dpctl_print(dpctl_p, "\tv6 frags overlapped: %u\n",
+                        n6frag_overlap);
+        } else {
+            dpctl_error(dpctl_p, error,
+                        "ipf status could not be retrieved");
+        }
+
+        dpif_close(dpif);
+    }
+
+    return error;
+}
+
 /* Undocumented commands for unit testing. */
 
 static int
@@ -2158,6 +2229,8 @@ static const struct dpctl_command all_commands[] = {
        dpctl_ct_ipf_set_min_frag, DP_RW },
     { "ipf-set-maxfrags", "[dp] maxfrags", 1, 2,
        dpctl_ct_ipf_set_nfrag_max, DP_RW },
+    { "ipf-get-status", "[dp]", 0, 1, dpctl_ct_ipf_get_status,
+      DP_RO },
     { "help", "", 0, INT_MAX, dpctl_help, DP_RO },
     { "list-commands", "", 0, INT_MAX, dpctl_list_commands, DP_RO },
 

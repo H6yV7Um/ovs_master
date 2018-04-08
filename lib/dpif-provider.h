@@ -450,6 +450,13 @@ struct dpif_class {
     int (*ipf_set_min_frag)(struct dpif *, bool, uint32_t);
     /* Set maximum number of fragments tracked. */
     int (*ipf_set_nfrag_max)(struct dpif *, uint32_t);
+    /* Get fragmentation configuration status and counters. */
+    int (*ipf_get_status)(struct dpif *, bool *, unsigned int *,
+        unsigned int *, unsigned int *, unsigned int *,
+        unsigned int *, unsigned int *, unsigned int *,
+        unsigned int *, bool *, unsigned int *, unsigned int *,
+        unsigned int *, unsigned int *, unsigned int *,
+        unsigned int *);
     /* Meters */
 
     /* Queries 'dpif' for supported meter features.

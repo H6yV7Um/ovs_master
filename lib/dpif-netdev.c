@@ -5892,6 +5892,38 @@ dpif_netdev_ipf_set_nfrag_max(struct dpif *dpif OVS_UNUSED,
     return ipf_set_nfrag_max(max_frags);
 }
 
+static int
+dpif_netdev_ipf_get_status(struct dpif *dpif OVS_UNUSED,
+    bool *ipf_v4_enabled, unsigned int *min_v4_frag_size,
+    unsigned int *nfrag_max, unsigned int *nfrag,
+    unsigned int *n4frag_accepted, unsigned int *n4frag_completed_sent,
+    unsigned int *n4frag_expired_sent, unsigned int *n4frag_too_small,
+    unsigned int *n4frag_overlap, bool *ipf_v6_enabled,
+    unsigned int *min_v6_frag_size, unsigned int *n6frag_accepted,
+    unsigned int *n6frag_completed_sent, unsigned int *n6frag_expired_sent,
+    unsigned int *n6frag_too_small, unsigned int *n6frag_overlap)
+{
+    struct ipf_status ipf_status;
+    ipf_get_status(&ipf_status);
+    *ipf_v4_enabled = ipf_status.ifp_v4_enabled;
+    *min_v4_frag_size = ipf_status.min_v4_frag_size;
+    *nfrag_max = ipf_status.nfrag_max;
+    *nfrag = ipf_status.nfrag;
+    *n4frag_accepted = ipf_status.n4frag_accepted;
+    *n4frag_completed_sent = ipf_status.n4frag_completed_sent;
+    *n4frag_expired_sent = ipf_status.n4frag_expired_sent;
+    *n4frag_too_small = ipf_status.n4frag_too_small;
+    *n4frag_overlap = ipf_status.n4frag_overlap;
+    *ipf_v6_enabled = ipf_status.ifp_v6_enabled;
+    *min_v6_frag_size = ipf_status.min_v6_frag_size;
+    *n6frag_accepted = ipf_status.n6frag_accepted;
+    *n6frag_completed_sent = ipf_status.n6frag_completed_sent;
+    *n6frag_expired_sent = ipf_status.n6frag_expired_sent;
+    *n6frag_too_small = ipf_status.n6frag_too_small;
+    *n6frag_overlap = ipf_status.n6frag_overlap;
+    return 0;
+}
+
 const struct dpif_class dpif_netdev_class = {
     "netdev",
     dpif_netdev_init,
@@ -5943,6 +5975,7 @@ const struct dpif_class dpif_netdev_class = {
     dpif_netdev_ipf_change_enabled,
     dpif_netdev_ipf_set_min_frag,
     dpif_netdev_ipf_set_nfrag_max,
+    dpif_netdev_ipf_get_status,
     dpif_netdev_meter_get_features,
     dpif_netdev_meter_set,
     dpif_netdev_meter_get,

@@ -1284,3 +1284,29 @@ ipf_set_nfrag_max(uint32_t value)
     atomic_store_relaxed(&nfrag_max, value);
     return 0;
 }
+
+int
+ipf_get_status(struct ipf_status *ipf_status)
+{
+    atomic_read_relaxed(&ifp_v4_enabled, &ipf_status->ifp_v4_enabled);
+    atomic_read_relaxed(&min_v4_frag_size, &ipf_status->min_v4_frag_size);
+    atomic_read_relaxed(&nfrag_max, &ipf_status->nfrag_max);
+    ipf_status->nfrag = atomic_count_get(&nfrag);
+    ipf_status->n4frag_accepted = atomic_count_get(&n4frag_accepted);
+    ipf_status->n4frag_completed_sent =
+        atomic_count_get(&n4frag_completed_sent);
+    ipf_status->n4frag_expired_sent =
+        atomic_count_get(&n4frag_expired_sent);
+    ipf_status->n4frag_too_small = atomic_count_get(&n4frag_too_small);
+    ipf_status->n4frag_overlap = atomic_count_get(&n4frag_overlap);
+    atomic_read_relaxed(&ifp_v6_enabled, &ipf_status->ifp_v6_enabled);
+    atomic_read_relaxed(&min_v6_frag_size, &ipf_status->min_v6_frag_size);
+    ipf_status->n6frag_accepted = atomic_count_get(&n6frag_accepted);
+    ipf_status->n6frag_completed_sent =
+        atomic_count_get(&n6frag_completed_sent);
+    ipf_status->n6frag_expired_sent =
+        atomic_count_get(&n6frag_expired_sent);
+    ipf_status->n6frag_too_small = atomic_count_get(&n6frag_too_small);
+    ipf_status->n6frag_overlap = atomic_count_get(&n6frag_overlap);
+    return 0;
+}

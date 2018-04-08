@@ -294,3 +294,8 @@ connection tracker.  The default value is 1000 and the clamped maximum
 is 5000.  Note that packet buffers can be held by the fragmentation
 module while fragments are incomplete, but will timeout after 15 seconds.
 Memory pool sizing should be set accordingly when fragmentation is enabled.
+.
+.TP
+\*(DX\fBipf\-get\-status\fR [\fIdp\fR]
+Gets the configuration settings and fragment counters associated with the
+fragmentation handling of the userspace datapath connection tracker.
