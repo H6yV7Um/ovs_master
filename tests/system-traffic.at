@@ -1776,6 +1776,9 @@ priority=100,in_port=2,ct_state=+trk+est-new,icmp,action=1
 
 AT_CHECK([ovs-ofctl --bundle add-flows br0 flows.txt])
 
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
+
 dnl Ipv4 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 1600 -q -c 3 -i 0.3 -w 2 10.1.1.2 | FORMAT_PING], [0], [dnl
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
@@ -1785,6 +1788,9 @@ dnl Ipv4 larger fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 3200 -q -c 3 -i 0.3 -w 2 10.1.1.2 | FORMAT_PING], [0], [dnl
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
 ])
+
+dnl Check userspace conntrack fragmentation counters.
+DPCTL_CHECK_FRAGMENTATION_PASS()
 
 OVS_TRAFFIC_VSWITCHD_STOP
 AT_CLEANUP
@@ -1811,10 +1817,16 @@ priority=100,in_port=2,ct_state=+trk+est-new,icmp,action=1
 
 AT_CHECK([ovs-ofctl --bundle add-flows br0 flows.txt])
 
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
+
 dnl Ipv4 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 1600 -q -c 1 -i 0.3 -w 2 10.1.1.2 | FORMAT_PING], [0], [dnl
 7 packets transmitted, 0 received, 100% packet loss, time 0ms
 ])
+
+dnl Check userspace conntrack fragmentation counters.
+DPCTL_CHECK_FRAGMENTATION_FAIL()
 
 OVS_TRAFFIC_VSWITCHD_STOP
 AT_CLEANUP
@@ -1841,6 +1853,9 @@ priority=100,in_port=2,ct_state=+trk+est-new,icmp,action=1
 
 AT_CHECK([ovs-ofctl --bundle add-flows br0 flows.txt])
 
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
+
 dnl Ipv4 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 1600 -q -c 3 -i 0.3 -w 2 10.2.2.2 | FORMAT_PING], [0], [dnl
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
@@ -1850,6 +1865,9 @@ dnl Ipv4 larger fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 3200 -q -c 3 -i 0.3 -w 2 10.2.2.2 | FORMAT_PING], [0], [dnl
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
 ])
+
+dnl Check userspace conntrack fragmentation counters.
+DPCTL_CHECK_FRAGMENTATION_PASS()
 
 OVS_TRAFFIC_VSWITCHD_STOP
 AT_CLEANUP
@@ -1882,6 +1900,9 @@ priority=100,in_port=2,ct_state=+trk+est-new,icmp,action=1
 AT_CHECK([ovs-ofctl --bundle add-flows br0 flows.txt])
 
 OVS_WAIT_UNTIL([ip netns exec at_ns0 ping -c 1 10.2.2.2])
+
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
 
 dnl Ipv4 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping -s 1600 -q -c 3 -i 0.3 -w 2 10.2.2.2 | FORMAT_PING], [0], [dnl
@@ -1932,6 +1953,9 @@ dnl waiting, we get occasional failures due to the following error:
 dnl "connect: Cannot assign requested address"
 OVS_WAIT_UNTIL([ip netns exec at_ns0 ping6 -c 1 fc00::2])
 
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
+
 dnl Ipv6 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping6 -s 1600 -q -c 3 -i 0.3 -w 2 fc00::2 | FORMAT_PING], [0], [dnl
 3 packets transmitted, 3 received, 0% packet loss, time 0ms
@@ -1975,6 +1999,9 @@ dnl waiting, we get occasional failures due to the following error:
 dnl "connect: Cannot assign requested address"
 OVS_WAIT_UNTIL([ip netns exec at_ns0 ping6 -c 1 fc00::2])
 
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
+
 dnl Send an IPv6 fragment. Some time later, it should expire.
 NS_CHECK_EXEC([at_ns0], [ping6 -s 1600 -q -c 1 -i 0.3 -w 2 fc00::2 | FORMAT_PING], [0], [dnl
 7 packets transmitted, 0 received, 100% packet loss, time 0ms
@@ -2013,6 +2040,9 @@ dnl Linux seems to take a little time to get its IPv6 stack in order. Without
 dnl waiting, we get occasional failures due to the following error:
 dnl "connect: Cannot assign requested address"
 OVS_WAIT_UNTIL([ip netns exec at_ns0 ping6 -c 1 fc00::2])
+
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
 
 dnl Ipv4 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping6 -s 1600 -q -c 3 -i 0.3 -w 2 fc00:1::4 | FORMAT_PING], [0], [dnl
@@ -2056,6 +2086,9 @@ priority=100,icmp6,icmp_type=136,action=normal
 AT_CHECK([ovs-ofctl --bundle add-flows br0 flows.txt])
 
 OVS_WAIT_UNTIL([ip netns exec at_ns0 ping6 -c 1 fc00:1::4])
+
+dnl Modify userspace conntrack fragmentation handling.
+DPCTL_MODIFY_FRAGMENTATION()
 
 dnl Ipv6 fragmentation connectivity check.
 NS_CHECK_EXEC([at_ns0], [ping6 -s 1600 -q -c 3 -i 0.3 -w 2 fc00:1::4 | FORMAT_PING], [0], [dnl
