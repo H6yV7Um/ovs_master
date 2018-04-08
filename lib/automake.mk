@@ -107,6 +107,8 @@ lib_libopenvswitch_la_SOURCES = \
 	lib/hmapx.h \
 	lib/id-pool.c \
 	lib/id-pool.h \
+	lib/ipf.c \
+	lib/ipf.h \
 	lib/jhash.c \
 	lib/jhash.h \
 	lib/json.c \

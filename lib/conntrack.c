@@ -30,6 +30,7 @@
 #include "ct-dpif.h"
 #include "dp-packet.h"
 #include "flow.h"
+#include "ipf.h"
 #include "netdev.h"
 #include "odp-netlink.h"
 #include "openvswitch/hmap.h"
@@ -340,6 +341,7 @@ conntrack_init(struct conntrack *ct)
     atomic_init(&ct->n_conn_limit, DEFAULT_N_CONN_LIMIT);
     latch_init(&ct->clean_thread_exit);
     ct->clean_thread = ovs_thread_create("ct_clean", clean_thread_main, ct);
+    ipf_init();
 }
 
 /* Destroys the connection tracker 'ct' and frees all the allocated memory. */
@@ -382,6 +384,7 @@ conntrack_destroy(struct conntrack *ct)
     hindex_destroy(&ct->alg_expectation_refs);
     ct_rwlock_unlock(&ct->resources_lock);
     ct_rwlock_destroy(&ct->resources_lock);
+    ipf_destroy();
 }
 
 static unsigned hash_to_bucket(uint32_t hash)
@@ -1308,6 +1311,8 @@ conntrack_execute(struct conntrack *ct, struct dp_packet_batch *pkt_batch,
                   const struct nat_action_info_t *nat_action_info,
                   long long now)
 {
+    ipf_preprocess_conntrack(pkt_batch, now, dl_type, zone, ct->hash_basis);
+
     struct dp_packet *packet;
     struct conn_lookup_ctx ctx;
 
@@ -1320,6 +1325,8 @@ conntrack_execute(struct conntrack *ct, struct dp_packet_batch *pkt_batch,
         process_one(ct, packet, &ctx, zone, force, commit, now, setmark,
                     setlabel, nat_action_info, tp_src, tp_dst, helper);
     }
+
+    ipf_postprocess_conntrack(pkt_batch, now, dl_type);
 
     return 0;
 }
