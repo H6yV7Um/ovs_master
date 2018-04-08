@@ -446,6 +446,8 @@ struct dpif_class {
 
     /* IP Fragmentation. */
     int (*ipf_change_enabled)(struct dpif *, bool, bool);
+    /* Set minimum fragment allowed. */
+    int (*ipf_set_min_frag)(struct dpif *, bool, uint32_t);
     /* Meters */
 
     /* Queries 'dpif' for supported meter features.

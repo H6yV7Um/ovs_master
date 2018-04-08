@@ -1786,6 +1786,44 @@ dpctl_ct_ipf_change_enabled(int argc, const char *argv[],
     return error;
 }
 
+static int
+dpctl_ct_ipf_set_min_frag(int argc, const char *argv[],
+                          struct dpctl_params *dpctl_p)
+{
+    struct dpif *dpif;
+    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 4);
+    if (!error) {
+        char v4_or_v6[3] = {0};
+        if (ovs_scan(argv[argc - 2], "%2s", v4_or_v6) &&
+            (!strncmp(v4_or_v6, "v4", 2) || !strncmp(v4_or_v6, "v6", 2))) {
+            uint32_t min_fragment;
+            if (ovs_scan(argv[argc - 1], "%"SCNu32, &min_fragment)) {
+                error = ct_dpif_ipf_set_min_frag(
+                            dpif, !strncmp(v4_or_v6, "v6", 2), min_fragment);
+
+                if (!error) {
+                    dpctl_print(dpctl_p,
+                                "setting minimum fragment size successful");
+                } else {
+                    dpctl_error(dpctl_p, error,
+                                "setting minimum fragment size failed");
+                }
+            } else {
+                error = EINVAL;
+                dpctl_error(dpctl_p, error,
+                            "parameter missing for minimum fragment size");
+            }
+        } else {
+            error = EINVAL;
+            dpctl_error(dpctl_p, error,
+                        "parameter missing: v4 for ipv4 or v6 for ipv6");
+        }
+        dpif_close(dpif);
+    }
+
+    return error;
+}
+
 /* Undocumented commands for unit testing. */
 
 static int
@@ -2087,6 +2125,8 @@ static const struct dpctl_command all_commands[] = {
     { "ct-get-nconns", "[dp]", 0, 1, dpctl_ct_get_nconns, DP_RO },
     { "ipf-set-enabled", "[dp] v4_or_v6 enabled", 2, 3,
        dpctl_ct_ipf_change_enabled, DP_RW },
+    { "ipf-set-minfragment", "[dp] v4_or_v6 minfragment", 2, 3,
+       dpctl_ct_ipf_set_min_frag, DP_RW },
     { "help", "", 0, INT_MAX, dpctl_help, DP_RO },
     { "list-commands", "", 0, INT_MAX, dpctl_list_commands, DP_RO },
 

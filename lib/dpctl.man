@@ -279,3 +279,10 @@ differentiate between first and other fragments.  Although, this would
 logically already be true anyways, it is mentioned for clarity.  If there
 is a need to differentiate between first and other fragments, do it after
 conntrack.
+.
+.TP
+\*(DX\fBipf\-set\-minfrag\fR [\fIdp\fR] [\fIv4 or v6\fR] \fBminfrag\fR
+Sets the minimum fragment size supported by the userspace datapath
+connection tracker.  Either v4 or v6 must be specified.  The default v4
+value is 1200 and the clamped minimum is 400.  The default v6 value is
+1280, which is also the clamped minimum.

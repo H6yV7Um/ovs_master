@@ -63,4 +63,7 @@ ipf_destroy(void);
 int
 ipf_change_enabled(bool v6, bool enable);
 
+int
+ipf_set_min_frag(bool v6, uint32_t value);
+
 #endif /* ipf.h */
