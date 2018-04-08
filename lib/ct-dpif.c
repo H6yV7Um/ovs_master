@@ -209,6 +209,30 @@ int ct_dpif_ipf_get_status(struct dpif *dpif, bool *ipf_v4_enabled,
             : EOPNOTSUPP);
 }
 
+int
+ct_dpif_ipf_dump_start(struct dpif *dpif, struct ipf_dump_ctx **dump_ctx)
+{
+    return (dpif->dpif_class->ipf_dump_start
+           ? dpif->dpif_class->ipf_dump_start(dpif, dump_ctx)
+           : EOPNOTSUPP);
+}
+
+int
+ct_dpif_ipf_dump_next(struct dpif *dpif, void *dump_ctx,  char **dump)
+{
+    return (dpif->dpif_class->ipf_dump_next
+            ? dpif->dpif_class->ipf_dump_next(dpif, dump_ctx, dump)
+            : EOPNOTSUPP);
+}
+
+int
+ct_dpif_ipf_dump_done(struct dpif *dpif, void *dump_ctx)
+{
+    return (dpif->dpif_class->ipf_dump_done
+            ? dpif->dpif_class->ipf_dump_done(dpif, dump_ctx)
+            : EOPNOTSUPP);
+}
+
 void
 ct_dpif_entry_uninit(struct ct_dpif_entry *entry)
 {

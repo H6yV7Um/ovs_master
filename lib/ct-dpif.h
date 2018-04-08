@@ -17,6 +17,7 @@
 #ifndef CT_DPIF_H
 #define CT_DPIF_H
 
+#include "ipf.h"
 #include "openvswitch/types.h"
 #include "packets.h"
 
@@ -209,6 +210,9 @@ int ct_dpif_ipf_get_status(struct dpif *dpif, bool *, unsigned int *,
                            unsigned int *, bool *, unsigned int *,
                            unsigned int *, unsigned int *, unsigned int *,
                            unsigned int *, unsigned int *);
+int ct_dpif_ipf_dump_start(struct dpif *dpif, struct ipf_dump_ctx **);
+int ct_dpif_ipf_dump_next(struct dpif *dpif, void *, char **);
+int ct_dpif_ipf_dump_done(struct dpif *dpif, void *);
 void ct_dpif_entry_uninit(struct ct_dpif_entry *);
 void ct_dpif_format_entry(const struct ct_dpif_entry *, struct ds *,
                           bool verbose, bool print_stats);

@@ -296,6 +296,7 @@ module while fragments are incomplete, but will timeout after 15 seconds.
 Memory pool sizing should be set accordingly when fragmentation is enabled.
 .
 .TP
-\*(DX\fBipf\-get\-status\fR [\fIdp\fR]
+\*(DX\fBipf\-get\-status\fR [\fIdp\fR] [\fIverbose\fR]
 Gets the configuration settings and fragment counters associated with the
-fragmentation handling of the userspace datapath connection tracker.
+fragmentation handling of the userspace datapath connection tracker.  If
+verbose is specified, also dumps the ipf list entries.

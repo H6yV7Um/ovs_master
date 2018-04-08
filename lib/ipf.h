@@ -72,4 +72,15 @@ ipf_set_nfrag_max(uint32_t value);
 int
 ipf_get_status(struct ipf_status *ipf_status);
 
+struct ipf_dump_ctx;
+
+int
+ipf_dump_start(struct ipf_dump_ctx **ipf_dump_ctx);
+
+int
+ipf_dump_next(struct ipf_dump_ctx *ipf_dump_ctx, char **dump);
+
+int
+ipf_dump_done(struct ipf_dump_ctx *ipf_dump_ctx);
+
 #endif /* ipf.h */

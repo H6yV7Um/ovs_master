@@ -35,6 +35,7 @@
 #include "dpif.h"
 #include "openvswitch/dynamic-string.h"
 #include "flow.h"
+#include "ipf.h"
 #include "openvswitch/match.h"
 #include "netdev.h"
 #include "netdev-dpdk.h"
@@ -1852,12 +1853,37 @@ dpctl_ct_ipf_set_nfrag_max(int argc, const char *argv[],
     return error;
 }
 
+static void
+dpctl_dump_ipf(struct dpif *dpif, struct dpctl_params *dpctl_p)
+{
+    struct ipf_dump_ctx *dump_ctx;
+    char *dump;
+
+    int error = ct_dpif_ipf_dump_start(dpif, &dump_ctx);
+    if (error) {
+        dpctl_error(dpctl_p, error, "starting ipf dump");
+        return;
+    }
+
+    dpctl_print(dpctl_p, "\n\tFragment Lists:\n\n");
+    while (!(error = ct_dpif_ipf_dump_next(dpif, dump_ctx, &dump))) {
+        dpctl_print(dpctl_p, "%s\n", dump);
+        free(dump);
+    }
+
+    if (error && error != EOF) {
+        dpctl_error(dpctl_p, error, "dumping ipf entry");
+    }
+
+    ct_dpif_ipf_dump_done(dpif, dump_ctx);
+}
+
 static int
 dpctl_ct_ipf_get_status(int argc, const char *argv[],
                         struct dpctl_params *dpctl_p)
 {
     struct dpif *dpif;
-    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 2);
+    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 3);
     if (!error) {
         bool ipf_v4_enabled;
         unsigned int min_v4_frag_size;
@@ -1916,6 +1942,11 @@ dpctl_ct_ipf_get_status(int argc, const char *argv[],
         } else {
             dpctl_error(dpctl_p, error,
                         "ipf status could not be retrieved");
+            return error;
+        }
+
+        if (argc > 1 && !strncmp(argv[argc - 1], "verbose", 7)) {
+            dpctl_dump_ipf(dpif, dpctl_p);
         }
 
         dpif_close(dpif);
@@ -2229,7 +2260,7 @@ static const struct dpctl_command all_commands[] = {
        dpctl_ct_ipf_set_min_frag, DP_RW },
     { "ipf-set-maxfrags", "[dp] maxfrags", 1, 2,
        dpctl_ct_ipf_set_nfrag_max, DP_RW },
-    { "ipf-get-status", "[dp]", 0, 1, dpctl_ct_ipf_get_status,
+    { "ipf-get-status", "[dp] [verbose]", 0, 2, dpctl_ct_ipf_get_status,
       DP_RO },
     { "help", "", 0, INT_MAX, dpctl_help, DP_RO },
     { "list-commands", "", 0, INT_MAX, dpctl_list_commands, DP_RO },

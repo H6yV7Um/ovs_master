@@ -24,6 +24,7 @@
 
 #include "openflow/openflow.h"
 #include "dpif.h"
+#include "ipf.h"
 #include "util.h"
 
 #ifdef  __cplusplus
@@ -457,6 +458,10 @@ struct dpif_class {
         unsigned int *, bool *, unsigned int *, unsigned int *,
         unsigned int *, unsigned int *, unsigned int *,
         unsigned int *);
+    int (*ipf_dump_start)(struct dpif *, struct ipf_dump_ctx **);
+    /* Gets an ipf list entry to display. */
+    int (*ipf_dump_next)(struct dpif *, void *, char **);
+    int (*ipf_dump_done)(struct dpif *, void *);
     /* Meters */
 
     /* Queries 'dpif' for supported meter features.

@@ -5924,6 +5924,28 @@ dpif_netdev_ipf_get_status(struct dpif *dpif OVS_UNUSED,
     return 0;
 }
 
+static int
+dpif_netdev_ipf_dump_start(struct dpif *dpif OVS_UNUSED,
+                           struct ipf_dump_ctx **ipf_dump_ctx)
+{
+    return ipf_dump_start(ipf_dump_ctx);
+}
+
+static int
+dpif_netdev_ipf_dump_next(struct dpif *dpif OVS_UNUSED,
+                          void *ipf_dump_ctx, char **dump)
+{
+    return ipf_dump_next(ipf_dump_ctx, dump);
+}
+
+static int
+dpif_netdev_ipf_dump_done(struct dpif *dpif OVS_UNUSED,
+                          void *ipf_dump_ctx)
+{
+    return ipf_dump_done(ipf_dump_ctx);
+
+}
+
 const struct dpif_class dpif_netdev_class = {
     "netdev",
     dpif_netdev_init,
@@ -5976,6 +5998,9 @@ const struct dpif_class dpif_netdev_class = {
     dpif_netdev_ipf_set_min_frag,
     dpif_netdev_ipf_set_nfrag_max,
     dpif_netdev_ipf_get_status,
+    dpif_netdev_ipf_dump_start,
+    dpif_netdev_ipf_dump_next,
+    dpif_netdev_ipf_dump_done,
     dpif_netdev_meter_get_features,
     dpif_netdev_meter_set,
     dpif_netdev_meter_get,
