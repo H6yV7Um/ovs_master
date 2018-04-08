@@ -1824,6 +1824,35 @@ dpctl_ct_ipf_set_min_frag(int argc, const char *argv[],
     return error;
 }
 
+static int
+dpctl_ct_ipf_set_nfrag_max(int argc, const char *argv[],
+                           struct dpctl_params *dpctl_p)
+{
+    struct dpif *dpif;
+    int error = dpctl_ct_open_dp(argc, argv, dpctl_p, &dpif, 3);
+    if (!error) {
+        uint32_t nfrags_max;
+        if (ovs_scan(argv[argc - 1], "%"SCNu32, &nfrags_max)) {
+            error = ct_dpif_ipf_set_nfrag_max(dpif, nfrags_max);
+
+            if (!error) {
+                dpctl_print(dpctl_p,
+                            "setting maximum fragments successful");
+            } else {
+                dpctl_error(dpctl_p, error,
+                            "setting maximum fragments failed");
+            }
+        } else {
+            error = EINVAL;
+            dpctl_error(dpctl_p, error,
+                        "parameter missing for maximum fragments");
+        }
+        dpif_close(dpif);
+    }
+
+    return error;
+}
+
 /* Undocumented commands for unit testing. */
 
 static int
@@ -2127,6 +2156,8 @@ static const struct dpctl_command all_commands[] = {
        dpctl_ct_ipf_change_enabled, DP_RW },
     { "ipf-set-minfragment", "[dp] v4_or_v6 minfragment", 2, 3,
        dpctl_ct_ipf_set_min_frag, DP_RW },
+    { "ipf-set-maxfrags", "[dp] maxfrags", 1, 2,
+       dpctl_ct_ipf_set_nfrag_max, DP_RW },
     { "help", "", 0, INT_MAX, dpctl_help, DP_RO },
     { "list-commands", "", 0, INT_MAX, dpctl_list_commands, DP_RO },
 

@@ -286,3 +286,11 @@ Sets the minimum fragment size supported by the userspace datapath
 connection tracker.  Either v4 or v6 must be specified.  The default v4
 value is 1200 and the clamped minimum is 400.  The default v6 value is
 1280, which is also the clamped minimum.
+.
+.TP
+\*(DX\fBipf\-set\-maxfrags\fR [\fIdp\fR] \fBmaxfrags\fR
+Sets the maximum number of fragments tracked by the userspace datapath
+connection tracker.  The default value is 1000 and the clamped maximum
+is 5000.  Note that packet buffers can be held by the fragmentation
+module while fragments are incomplete, but will timeout after 15 seconds.
+Memory pool sizing should be set accordingly when fragmentation is enabled.

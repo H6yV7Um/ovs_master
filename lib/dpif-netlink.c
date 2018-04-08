@@ -2996,6 +2996,7 @@ const struct dpif_class dpif_netlink_class = {
     NULL,                       /* ct_get_nconns */
     NULL,                       /* ipf_change_enabled */
     NULL,                       /* ipf_set_min_frag */
+    NULL,                       /* ipf_set_nfrag_max */
     dpif_netlink_meter_get_features,
     dpif_netlink_meter_set,
     dpif_netlink_meter_get,

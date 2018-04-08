@@ -66,4 +66,7 @@ ipf_change_enabled(bool v6, bool enable);
 int
 ipf_set_min_frag(bool v6, uint32_t value);
 
+int
+ipf_set_nfrag_max(uint32_t value);
+
 #endif /* ipf.h */
