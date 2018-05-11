@@ -6953,8 +6953,11 @@ commit_set_ipv4_action(const struct flow *flow, struct flow *base_flow,
     struct ovs_key_ipv4 key, mask, base;
 
     /* Check that nw_proto and nw_frag remain unchanged. */
-    ovs_assert(flow->nw_proto == base_flow->nw_proto &&
-               flow->nw_frag == base_flow->nw_frag);
+    ovs_assert(flow->nw_proto == base_flow->nw_proto);
+
+if (flow->nw_frag != base_flow->nw_frag) {
+    VLOG_WARN("DARRELL commit_set_ipv4_action: $$$$$$$$$$$$$$$$");
+}
 
     get_ipv4_key(flow, &key, false);
     get_ipv4_key(base_flow, &base, false);
